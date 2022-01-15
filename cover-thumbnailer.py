@@ -233,7 +233,7 @@ class Thumb(object):
                 self.img.append(img)
         self.thumb = None
 
-    def thumbnailize(self, image, twidth=128, theight=128, crop=True):
+    def thumbnailize(self, image, twidth=256, theight=256, crop=True):
         """ Make thumbnail.
 
         Crop the picture if necessaries and return a thumbnail of it.
