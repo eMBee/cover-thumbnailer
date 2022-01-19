@@ -573,7 +573,7 @@ def search_pictures(path):
     return pictures
 
 
-def search_pictures_recursiv(path):
+def search_pictures_recursiv(path, max_pictures):
     """ Search recursively for pictures in the folder
 
     Search for pictures in the subfolders and return their name as a list
@@ -583,14 +583,26 @@ def search_pictures_recursiv(path):
       * path -- the path of the folder
     """
     pictures = []
-    for root, dirs, files in os.walk(path):
-        if len(pictures) <= 4: #4 pictures max... don't need more
-            for file_ in files:
-                if file_[-4:] in PICTURES_EXT:
-                    pictures.append(os.path.join(path, root, file_))
-                    break
-        else:
-            break
+    dirlist = sorted([(dirpath.count(os.path.sep), dirpath, dirnames,
+               list(filter(lambda x: x[-4:] in PICTURES_EXT, filenames)))
+               for dirpath, dirnames, filenames in os.walk(path)
+               if list(filter(lambda x: x[-4:] in PICTURES_EXT, filenames))])[:max_pictures]
+    if not dirlist:
+        return []
+    pic_entry = 0
+    empty = [False]
+    # if the dirlist is shorter than max_pictures we walk the list repeatedly,
+    # picking the first entry of each list, then the second, etc until we have
+    # found enough pictures or there are no more.
+    while len(pictures) < max_pictures and False in empty:
+        empty = []
+        for entry in dirlist:
+            if len(entry[3]) > pic_entry:
+                pictures.append(os.path.join(path, entry[1], entry[3][pic_entry]))
+                empty.append(False)
+            else:
+                empty.append(True)
+        pic_entry += 1
     return pictures
 
 
@@ -663,7 +675,7 @@ if __name__ == "__main__":
         if len(covers) == 0:
             covers = search_pictures(INPUT_FOLDER)
             if len(covers) == 0:
-                covers = search_pictures_recursiv(INPUT_FOLDER)
+                covers = search_pictures_recursiv(INPUT_FOLDER, CONF['pictures_maxthumbs'])
                 if len(covers) == 0 and not CONF['music_keepdefaulticon']:
                     covers = [CONF['music_defaultimg']]
         if len(covers) > 0:
@@ -697,8 +709,8 @@ if __name__ == "__main__":
         picture_list = search_cover(INPUT_FOLDER)
         if len(picture_list) == 0:
             picture_list = search_pictures(INPUT_FOLDER)
-            if len(picture_list) == 0:
-                picture_list = search_pictures_recursiv(INPUT_FOLDER)
+            if len(picture_list) < CONF['pictures_maxthumbs']:
+                picture_list = search_pictures_recursiv(INPUT_FOLDER, CONF['pictures_maxthumbs'])
         thumbnail = Thumb(picture_list)
         thumbnail.pictures_thumbnail(
                 CONF['pictures_bg'],
