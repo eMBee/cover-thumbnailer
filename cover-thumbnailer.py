@@ -55,9 +55,9 @@ import os.path
 from gi.repository import Gio
 
 try:
-    from PIL import Image
+    from PIL import Image, ImageEnhance
 except:
-    import Image
+    import Image, ImageEnhance
 
 
 #==================================================================== CONF ====
@@ -224,6 +224,7 @@ class Thumb(object):
           * img_paths -- a list of picture path
         """
         self.img = []
+        self.img_paths = img_paths
         for path in img_paths:
             try:
                 img = Image.open(path).convert("RGBA")
@@ -345,6 +346,20 @@ class Thumb(object):
         bg.paste(fg, (0, 0), fg)
         self.thumb = bg
 
+    def folder_background(self, path, img_path, bg, thumb):
+        if path.count(os.path.sep) < img_path.count(os.path.sep):
+            bg_thumb = self.thumbnailize(bg.copy(), thumb.size[0]+30, thumb.size[1]+30, crop=False)
+            enhancer = ImageEnhance.Brightness(bg_thumb)
+            bg_thumb2 = enhancer.enhance(0.5)
+            bg_thumb2.paste(thumb,
+                            (int((bg_thumb2.size[0]-thumb.size[0])/2),
+                             int((bg_thumb2.size[1]-thumb.size[1])/2)),
+                            thumb)
+            return bg_thumb2
+        else:
+            return thumb
+
+
     def pictures_thumbnail(self, bg_picture, fg_picture, max_pictures=3):
         """ Makes thumbnails for picture folders.
 
@@ -361,6 +376,7 @@ class Thumb(object):
         bg_height = bg.size[1]
         picts = []
         number_of_pictures = 0
+        path = os.path.commonprefix(self.img_paths)
         #One picture
         if len(self.img) == 1 or max_pictures == 1 and len(self.img) > 0:
             number_of_pictures = 1
@@ -387,6 +403,8 @@ class Thumb(object):
                     int(0.53*bg_height),
                     crop=False
                     )
+            thumb = self.folder_background(path, self.img_paths[0], bg, thumb)
+
             picts.append({
                     'thumb': thumb,
                     'x': 10,
@@ -399,6 +417,8 @@ class Thumb(object):
                     int(0.53*bg_height),
                     crop=False
                     )
+            thumb = self.folder_background(path, self.img_paths[1], bg, thumb)
+
             x = bg_width - thumb.size[0] - 10
             y = bg_height - thumb.size[1] - 5
             picts.append({
@@ -416,6 +436,8 @@ class Thumb(object):
                     int(bg_height/2 - 7.5),
                     crop=False
                     )
+            thumb = self.folder_background(path, self.img_paths[0], bg, thumb)
+
             x = int(1*bg_width/4 - thumb.size[0]/2)
             y = int(1*bg_height/4 - thumb.size[1]/2)
             picts.append({
@@ -430,6 +452,8 @@ class Thumb(object):
                     int(bg_height/2 - 7.5),
                     crop=False
                     )
+            thumb = self.folder_background(path, self.img_paths[1], bg, thumb)
+
             x = int(3*bg_width/4 - thumb.size[0]/2)
             y = int(1*bg_height/4 - thumb.size[1]/2)
             picts.append({
@@ -444,6 +468,8 @@ class Thumb(object):
                     int(bg_height/2 - 7.5),
                     crop=False
                     )
+            thumb = self.folder_background(path, self.img_paths[2], bg, thumb)
+
             x = int(2*bg_width/4 - thumb.size[0]/2)
             y = int(3*bg_height/4 - thumb.size[1]/2)
             picts.append({
@@ -461,6 +487,8 @@ class Thumb(object):
                     int(bg_height/2 - 7.5),
                     crop=False
                     )
+            thumb = self.folder_background(path, self.img_paths[0], bg, thumb)
+
             x = int(1*bg_width/4 - thumb.size[0]/2)
             y = int(1*bg_height/4 - thumb.size[1]/2)
             picts.append({
@@ -475,6 +503,8 @@ class Thumb(object):
                     int(bg_height/2 - 7.5),
                     crop=False
                     )
+            thumb = self.folder_background(path, self.img_paths[1], bg, thumb)
+
             x = int(3*bg_width/4 - thumb.size[0]/2)
             y = int(1*bg_height/4 - thumb.size[1]/2)
             picts.append({
@@ -489,6 +519,8 @@ class Thumb(object):
                     int(bg_height/2 - 7.5),
                     crop=False
                     )
+            thumb = self.folder_background(path, self.img_paths[2], bg, thumb)
+
             x = int(1*bg_width/4 - thumb.size[0]/2)
             y = int(3*bg_height/4 - thumb.size[1]/2)
             picts.append({
@@ -503,6 +535,8 @@ class Thumb(object):
                     int(bg_height/2 - 7.5),
                     crop=False
                     )
+            thumb = self.folder_background(path, self.img_paths[3], bg, thumb)
+
             x = int(3*bg_width/4 - thumb.size[0]/2)
             y = int(3*bg_height/4 - thumb.size[1]/2)
             picts.append({
