@@ -410,25 +410,42 @@ class Thumb(object):
         elif len(self.img) == 3 or max_pictures == 3 and len(self.img) > 0:
             number_of_pictures = 3
             #Thumb 0
-            thumb = self.thumbnailize(self.img[0], 49, 56, crop=False)
-            picts.append({
-                    'thumb': thumb,
-                    'x': 20,
-                    'y': 5
-                    })
-            #Thumb 1
-            thumb = self.thumbnailize(self.img[1], 49, 56, crop=False)
-            x = int(bg_width - thumb.size[0] - 5)
+            thumb = self.thumbnailize(
+                    self.img[0],
+                    int(bg_width/2 - 7.5),
+                    int(bg_height/2 - 7.5),
+                    crop=False
+                    )
+            x = int(1*bg_width/4 - thumb.size[0]/2)
+            y = int(1*bg_height/4 - thumb.size[1]/2)
             picts.append({
                     'thumb': thumb,
                     'x': x,
-                    'y': 5
+                    'y': y
+                    })
+            #Thumb 1
+            thumb = self.thumbnailize(
+                    self.img[1],
+                    int(bg_width/2 - 7.5),
+                    int(bg_height/2 - 7.5),
+                    crop=False
+                    )
+            x = int(3*bg_width/4 - thumb.size[0]/2)
+            y = int(1*bg_height/4 - thumb.size[1]/2)
+            picts.append({
+                    'thumb': thumb,
+                    'x': x,
+                    'y': y
                     })
             #Thumb 2
-            h = int(bg_height - max(picts[0]['thumb'].size[1], picts[1]['thumb'].size[1]) - 15)
-            thumb = self.thumbnailize(self.img[2], 103, h, crop=False)
-            x = int((bg_width - 15 - thumb.size[0])/2 + 15)
-            y = int(bg_height - thumb.size[1] - 5)
+            thumb = self.thumbnailize(
+                    self.img[2],
+                    int(bg_width - 7.5),
+                    int(bg_height/2 - 7.5),
+                    crop=False
+                    )
+            x = int(2*bg_width/4 - thumb.size[0]/2)
+            y = int(3*bg_height/4 - thumb.size[1]/2)
             picts.append({
                     'thumb': thumb,
                     'x': x,
